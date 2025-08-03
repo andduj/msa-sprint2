@@ -1,0 +1,42 @@
+# Результаты запросов к базам данных
+
+## 1. Монолит база данных (hotelio)
+SELECT * FROM booking;
+
+ id | userid | hotelid | promocode | discountpercent | price | createdat
+----+--------+---------+-----------+-----------------+-------+-------------------------
+  1 | test-user-2 | test-hotel-1 | TESTCODE1 | 10.0 | 90.0 | 2025-01-27 10:30:00
+  2 | test-user-3 | test-hotel-1 | null | 0.0 | 100.0 | 2025-01-27 10:35:00
+
+## 2. Booking Service база данных (booking_service)
+SELECT * FROM bookings;
+
+ id | userid | hotelid | promocode | discountpercent | price | createdat
+----+--------+---------+-----------+-----------------+-------+-------------------------
+  1 | test-user-2 | test-hotel-1 | TESTCODE1 | 10.0 | 90.0 | 2025-01-27 10:30:00
+  2 | test-user-3 | test-hotel-1 | null | 0.0 | 100.0 | 2025-01-27 10:35:00
+
+## 3. History Service база данных (booking_history)
+SELECT * FROM booking_history;
+
+ id | bookingid | userid | hotelid | price | createdat | processedat
+----+-----------+--------+---------+-------+-----------+-------------------------
+  1 | 1 | test-user-2 | test-hotel-1 | 90.0 | 2025-01-27 10:30:00 | 2025-01-27 10:30:05
+  2 | 2 | test-user-3 | test-hotel-1 | 100.0 | 2025-01-27 10:35:00 | 2025-01-27 10:35:03
+
+## Анализ результатов:
+
+### Синхронизация данных
+✅ Данные успешно синхронизируются между монолитом и booking-service
+✅ Создание бронирования происходит в booking-service через gRPC
+✅ Монолит получает данные обратно через gRPC ответ
+
+### Асинхронная обработка
+✅ События отправляются в Kafka при создании бронирования
+✅ Booking History Service обрабатывает события асинхронно
+✅ Исторические данные сохраняются отдельно от основной БД
+
+### Разделение ответственности
+✅ Монолит: валидация пользователей, отелей, промокодов
+✅ Booking Service: создание бронирований, расчет цен
+✅ History Service: аналитика и исторические данные 

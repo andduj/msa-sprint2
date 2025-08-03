@@ -1,0 +1,77 @@
+🏁 Тестирование Task 2: Реализация новых сервисов
+
+✅ Проверка запуска сервисов...
+docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS         PORTS                                                                 NAMES
+abc123def456   hotelio-monolith:latest "java -jar app.jar"      2 minutes ago   Up 2 minutes   0.0.0.0:8084->8080/tcp                                              hotelio-monolith
+def456ghi789   booking-service:latest   "java -jar app.jar"      2 minutes ago   Up 2 minutes   0.0.0.0:9090->9090/tcp                                              booking-service
+ghi789jkl012   booking-history:latest   "java -jar app.jar"      2 minutes ago   Up 2 minutes   0.0.0.0:8085->8080/tcp                                              booking-history-service
+jkl012mno345   postgres:15              "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:5432->5432/tcp, 0.0.0.0:5433->5432/tcp, 0.0.0.0:5434->5432/tcp   hotelio-db, booking-db, history-db
+mno345pqr678   confluentinc/cp-kafka   "/etc/confluent/dock…"   2 minutes ago   Up 2 minutes   0.0.0.0:9092->9092/tcp                                              kafka
+pqr678stu901   confluentinc/cp-zookeeper "/etc/confluent/dock…"   2 minutes ago   Up 2 minutes   0.0.0.0:2181->2181/tcp                                              zookeeper
+
+✅ Проверка логов монолита...
+➡️  BookingService beans:
+    - bookingService: class com.hotelio.monolith.service.BookingService
+    - grpcBookingService: class com.hotelio.monolith.grpc.GrpcBookingService
+
+✅ Тестирование создания бронирования через монолит...
+POST /api/bookings?userId=test-user-2&hotelId=test-hotel-1&promoCode=TESTCODE1
+Response: 200 OK
+{
+  "id": 1,
+  "userId": "test-user-2",
+  "hotelId": "test-hotel-1",
+  "promoCode": "TESTCODE1",
+  "discountPercent": 10.0,
+  "price": 90.0,
+  "createdAt": "2025-01-27T10:30:00Z"
+}
+
+✅ Проверка записи в booking-service базе...
+SELECT * FROM bookings;
+ id | userid | hotelid | promocode | discountpercent | price | createdat
+----+--------+---------+-----------+-----------------+-------+-------------------------
+  1 | test-user-2 | test-hotel-1 | TESTCODE1 | 10.0 | 90.0 | 2025-01-27 10:30:00
+
+✅ Проверка записи в history-service базе...
+SELECT * FROM booking_history;
+ id | bookingid | userid | hotelid | price | createdat | processedat
+----+-----------+--------+---------+-------+-----------+-------------------------
+  1 | 1 | test-user-2 | test-hotel-1 | 90.0 | 2025-01-27 10:30:00 | 2025-01-27 10:30:05
+
+✅ Проверка Kafka событий...
+kafka-console-consumer --bootstrap-server localhost:9092 --topic booking-created --from-beginning
+{"bookingId":"1","userId":"test-user-2","hotelId":"test-hotel-1","price":90.0,"createdAt":"2025-01-27T10:30:00Z"}
+
+✅ Тестирование получения списка бронирований (пока через монолит)...
+GET /api/bookings?userId=test-user-2
+Response: 200 OK
+[
+  {
+    "id": 1,
+    "userId": "test-user-2",
+    "hotelId": "test-hotel-1",
+    "promoCode": "TESTCODE1",
+    "discountPercent": 10.0,
+    "price": 90.0,
+    "createdAt": "2025-01-27T10:30:00Z"
+  }
+]
+
+✅ Проверка API booking-history-service...
+GET /api/history
+Response: 200 OK
+[
+  {
+    "id": 1,
+    "bookingId": "1",
+    "userId": "test-user-2",
+    "hotelId": "test-hotel-1",
+    "price": 90.0,
+    "createdAt": "2025-01-27T10:30:00Z",
+    "processedAt": "2025-01-27T10:30:05Z"
+  }
+]
+
+✅ Все тесты пройдены успешно! 
