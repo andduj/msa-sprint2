@@ -44,4 +44,17 @@ protobuf {
             grpc {}
         }
     }
+    // Добавляем настройки для Windows
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+// Добавляем задачу для очистки сгенерированных файлов
+tasks.register('cleanGenerated') {
+    doLast {
+        delete "$projectDir/src/generated"
+    }
+}
+
+tasks.named('clean') {
+    dependsOn('cleanGenerated')
 } 
