@@ -1,0 +1,72 @@
+@startuml Strangler Fig Pattern - C4 Architecture
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' === Участники ===
+Person(user, "User", "Interacts with frontend")
+
+' === Система ===
+System_Boundary(hotelio_system, "Hotelio Monolith") {
+    Container(monolith_app, "Monolith Application", "Spring Boot", "Legacy app exposing REST endpoints for hotel booking")
+    ContainerDb(monolith_db, "Monolith DB", "PostgreSQL", "Stores users, hotels, bookings, reviews, promos")
+    
+    Container_Boundary(controllers, "Controllers") {
+        Container(booking_controller, "BookingController", "Spring MVC", "/api/bookings")
+        Container(hotel_controller, "HotelController", "Spring MVC", "/api/hotels")
+        Container(review_controller, "ReviewController", "Spring MVC", "/api/reviews")
+        Container(user_controller, "UserController", "Spring MVC", "/api/users")
+        Container(promo_controller, "PromoCodeController", "Spring MVC", "/api/promos")
+    }
+    
+    Container_Boundary(services, "Services") {
+        Container(booking_service, "BookingService", "Java Service", "Validates and creates bookings")
+        Container(hotel_service, "HotelService", "Java Service", "Retrieves hotel details")
+        Container(review_service, "ReviewService", "Java Service", "Manages hotel reviews")
+        Container(user_service, "UserService", "Java Service", "Validates user status and blacklist")
+        Container(promo_service, "PromoCodeService", "Java Service", "Applies discounts and rules")
+    }
+}
+
+' === API Gateway (Strangler Fig) ===
+Container(api_gateway, "API Gateway", "Spring Cloud Gateway", "Strangler Fig Pattern - Routes traffic")
+
+' === Новый Booking Service ===
+Container(booking_service_new, "Booking Service", "Spring Boot", "New microservice for bookings")
+ContainerDb(booking_db, "Booking DB", "PostgreSQL", "Stores bookings and payments")
+
+' === Взаимосвязи ===
+Rel(user, api_gateway, "Uses")
+
+' Strangler Fig Pattern - маршрутизация трафика
+Rel(api_gateway, booking_service_new, "Booking requests\n(10% → 50% → 100%)")
+Rel(api_gateway, monolith_app, "Other requests\n(90% → 50% → 0%)")
+
+' Связи внутри монолита
+Rel(booking_controller, booking_service, "Uses")
+Rel(hotel_controller, hotel_service, "Uses")
+Rel(review_controller, review_service, "Calls")
+Rel(review_controller, booking_service, "Uses")
+Rel(user_controller, user_service, "Uses")
+Rel(promo_controller, promo_service, "Uses")
+
+' Service to Service связи
+Rel(booking_service, user_service, "Calls")
+Rel(booking_service, promo_service, "Calls")
+Rel(review_service, user_service, "Uses")
+
+' Связи с базой данных монолита
+Rel(booking_service, monolith_db, "Reads/Writes")
+Rel(hotel_service, monolith_db, "Reads")
+Rel(review_service, monolith_db, "Reads/Writes")
+Rel(user_service, monolith_db, "Reads")
+Rel(promo_service, monolith_db, "Reads")
+
+' Связи нового Booking Service
+Rel(booking_service_new, booking_db, "JPA")
+
+' Аннотации
+note right of api_gateway : "Strangler Fig Pattern:\nПостепенно перенаправляет\nтрафик на новый сервис"
+note right of booking_service_new : "Выделенный сервис\nдля бронирований"
+note right of hotelio_system : "Существующий монолит\nс остальными сервисами"
+
+@enduml 
