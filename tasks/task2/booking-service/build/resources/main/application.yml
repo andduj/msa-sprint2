@@ -24,5 +24,11 @@ grpc:
   server:
     port: 9090
 
-server:
-  port: 8080 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always 
