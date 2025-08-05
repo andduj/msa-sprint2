@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
   monolith:
     build:
-      context: ../../hotelio-monolith
+      context: ../monolith
       dockerfile: Dockerfile
     container_name: hotelio-monolith
     ports:
