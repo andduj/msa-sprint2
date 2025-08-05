@@ -17,6 +17,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     
     // gRPC dependencies
     implementation("io.grpc:grpc-netty-shaded:1.64.0")
@@ -27,16 +28,23 @@ dependencies {
     // gRPC Spring Boot
     implementation("net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE")
     
+    // javax.annotation for Generated annotation
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
+    
     runtimeOnly("org.postgresql:postgresql")
 }
 
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:3.25.3"
+        // Используем локальный protoc
+        path = file("tools/bin/protoc.exe").absolutePath
     }
     plugins {
         grpc {
             artifact = "io.grpc:protoc-gen-grpc-java:1.64.0"
+            // Используем локальный protoc-gen-grpc-java
+            path = file("tools/protoc-gen-grpc-java.exe").absolutePath
         }
     }
     generateProtoTasks {
@@ -46,6 +54,17 @@ protobuf {
     }
     // Добавляем настройки для Windows
     generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+// Конфигурация для создания исполняемого JAR
+bootJar {
+    archiveBaseName = 'booking-service'
+    archiveVersion = '1.0.0'
+    archiveClassifier = ''
+}
+
+jar {
+    enabled = false
 }
 
 // Добавляем задачу для очистки сгенерированных файлов

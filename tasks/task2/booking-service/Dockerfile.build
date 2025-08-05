@@ -1,0 +1,23 @@
+FROM gradle:8.8-jdk17
+
+WORKDIR /app
+
+# Копируем файлы проекта
+COPY . .
+
+# Устанавливаем protoc и плагины
+RUN apt-get update && apt-get install -y \
+    protobuf-compiler \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Скачиваем protoc-gen-grpc-java
+RUN wget -O /usr/local/bin/protoc-gen-grpc-java \
+    https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.64.0/protoc-gen-grpc-java-1.64.0-linux-x86_64.exe \
+    && chmod +x /usr/local/bin/protoc-gen-grpc-java
+
+# Создаем символическую ссылку для protoc-gen-grpc
+RUN ln -s /usr/local/bin/protoc-gen-grpc-java /usr/local/bin/protoc-gen-grpc
+
+# Собираем проект
+CMD ["gradle", "build"] 
