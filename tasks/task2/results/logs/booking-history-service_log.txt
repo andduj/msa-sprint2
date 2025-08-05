@@ -1,0 +1,161 @@
+docker logs booking-history-service
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+2025-08-05T17:56:32.432Z  INFO 1 --- [           main] c.h.b.BookingHistoryApplication          : Starting BookingHistoryApplication v1.0.0 using Java 17.0.2 with PID 1 (/app/app.jar started by root in /app)
+2025-08-05T17:56:32.436Z  INFO 1 --- [           main] c.h.b.BookingHistoryApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-08-05T17:56:33.334Z  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-05T17:56:33.388Z  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 46 ms. Found 1 JPA repository interface.
+2025-08-05T17:56:33.965Z  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-08-05T17:56:33.996Z  INFO 1 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-05T17:56:33.997Z  INFO 1 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-05T17:56:34.036Z  INFO 1 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-05T17:56:34.038Z  INFO 1 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1486 ms
+2025-08-05T17:56:34.245Z  INFO 1 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-05T17:56:34.307Z  INFO 1 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-08-05T17:56:34.342Z  INFO 1 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-05T17:56:34.544Z  INFO 1 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-05T17:56:34.568Z  INFO 1 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-08-05T17:56:34.808Z  INFO 1 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7b91d9f
+2025-08-05T17:56:34.810Z  INFO 1 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-08-05T17:56:35.558Z  INFO 1 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: drop table if exists booking_history cascade
+2025-08-05T17:56:35.569Z  WARN 1 --- [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2025-08-05T17:56:35.569Z  WARN 1 --- [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "booking_history" does not exist, skipping
+Hibernate: create table booking_history (price float(53), created_at timestamp(6) with time zone, id bigserial not null, processed_at timestamp(6) with time zone, booking_id varchar(255), hotel_id varchar(255), user_id varchar(255), primary key (id))
+2025-08-05T17:56:35.588Z  INFO 1 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T17:56:35.954Z  WARN 1 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-05T17:56:36.594Z  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2025-08-05T17:56:36.640Z  INFO 1 --- [           main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.include.jmx.reporter = true
+        auto.offset.reset = earliest
+        bootstrap.servers = [kafka:9092]
+        check.crcs = true
+        client.dns.lookup = use_all_dns_ips
+        client.id = consumer-booking-history-service-1
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 60000
+        enable.auto.commit = false
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = booking-history-service
+        group.instance.id = null
+        heartbeat.interval.ms = 3000
+        interceptor.classes = []
+        internal.leave.group.on.close = true
+        internal.throw.on.fetch.stable.offset.unsupported = false
+        isolation.level = read_uncommitted
+        key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+        max.partition.fetch.bytes = 1048576
+        max.poll.interval.ms = 300000
+        max.poll.records = 500
+        metadata.max.age.ms = 300000
+        metric.reporters = []
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+        receive.buffer.bytes = 65536
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = null
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.connect.timeout.ms = null
+        sasl.login.read.timeout.ms = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.login.retry.backoff.max.ms = 10000
+        sasl.login.retry.backoff.ms = 100
+        sasl.mechanism = GSSAPI
+        sasl.oauthbearer.clock.skew.seconds = 30
+        sasl.oauthbearer.expected.audience = null
+        sasl.oauthbearer.expected.issuer = null
+        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+        sasl.oauthbearer.jwks.endpoint.url = null
+        sasl.oauthbearer.scope.claim.name = scope
+        sasl.oauthbearer.sub.claim.name = sub
+        sasl.oauthbearer.token.endpoint.url = null
+        security.protocol = PLAINTEXT
+        security.providers = null
+        send.buffer.bytes = 131072
+        session.timeout.ms = 45000
+        socket.connection.setup.timeout.max.ms = 30000
+        socket.connection.setup.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+        ssl.endpoint.identification.algorithm = https
+        ssl.engine.factory.class = null
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.certificate.chain = null
+        ssl.keystore.key = null
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.3
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.certificates = null
+        ssl.truststore.location = null
+        ssl.truststore.password = null
+        ssl.truststore.type = JKS
+        value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-08-05T17:56:36.795Z  INFO 1 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.6.2
+2025-08-05T17:56:36.796Z  INFO 1 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: c4deed513057c94e
+2025-08-05T17:56:36.796Z  INFO 1 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1754416596794
+2025-08-05T17:56:36.800Z  INFO 1 --- [           main] fkaConsumerFactory$ExtendedKafkaConsumer : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Subscribed to topic(s): booking-created
+2025-08-05T17:56:36.836Z  INFO 1 --- [           main] c.h.b.BookingHistoryApplication          : Started BookingHistoryApplication in 4.981 seconds (process running for 5.504)
+2025-08-05T17:56:37.016Z  INFO 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Node -1 disconnected.
+2025-08-05T17:56:37.019Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Connection to node -1 (kafka/172.18.0.6:9092) could not be established. Broker may not be available.
+2025-08-05T17:56:37.019Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Bootstrap broker kafka:9092 (id: -1 rack: null) disconnected
+2025-08-05T17:56:37.117Z  INFO 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Node -1 disconnected.
+2025-08-05T17:56:37.118Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Connection to node -1 (kafka/172.18.0.6:9092) could not be established. Broker may not be available.
+2025-08-05T17:56:37.118Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Bootstrap broker kafka:9092 (id: -1 rack: null) disconnected
+2025-08-05T17:56:37.218Z  INFO 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Node -1 disconnected.
+2025-08-05T17:56:37.218Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Connection to node -1 (kafka/172.18.0.6:9092) could not be established. Broker may not be available.
+2025-08-05T17:56:37.218Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Bootstrap broker kafka:9092 (id: -1 rack: null) disconnected
+2025-08-05T17:56:37.469Z  INFO 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Node -1 disconnected.
+2025-08-05T17:56:37.470Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Connection to node -1 (kafka/172.18.0.6:9092) could not be established. Broker may not be available.
+2025-08-05T17:56:37.470Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Bootstrap broker kafka:9092 (id: -1 rack: null) disconnected
+2025-08-05T17:56:38.172Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Error while fetching metadata with correlation id 2 : {booking-created=LEADER_NOT_AVAILABLE}
+2025-08-05T17:56:38.173Z  INFO 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Cluster ID: qAF-A6xOQ6ygQ31PRKbSqw
+2025-08-05T17:56:38.306Z  WARN 1 --- [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Error while fetching metadata with correlation id 5 : {booking-created=LEADER_NOT_AVAILABLE}
+2025-08-05T17:56:39.336Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Discovered group coordinator kafka:9092 (id: 2147483646 rack: null)
+2025-08-05T17:56:39.338Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] (Re-)joining group
+2025-08-05T17:56:39.356Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Request joining group due to: need to re-join with the given member-id: consumer-booking-history-service-1-b9673649-a156-4513-9653-5e6482d182cf
+2025-08-05T17:56:39.356Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-08-05T17:56:39.357Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] (Re-)joining group
+2025-08-05T17:56:42.373Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Successfully joined group with generation Generation{generationId=1, memberId='consumer-booking-history-service-1-b9673649-a156-4513-9653-5e6482d182cf', protocol='range'}
+2025-08-05T17:56:42.376Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Finished assignment for group at generation 1: {consumer-booking-history-service-1-b9673649-a156-4513-9653-5e6482d182cf=Assignment(partitions=[booking-created-0])}
+2025-08-05T17:56:42.414Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Successfully synced group in generation Generation{generationId=1, memberId='consumer-booking-history-service-1-b9673649-a156-4513-9653-5e6482d182cf', protocol='range'}
+2025-08-05T17:56:42.415Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Notifying assignor about the new Assignment(partitions=[booking-created-0])
+2025-08-05T17:56:42.416Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Adding newly assigned partitions: booking-created-0
+2025-08-05T17:56:42.424Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Found no committed offset for partition booking-created-0
+2025-08-05T17:56:42.431Z  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.SubscriptionState    : [Consumer clientId=consumer-booking-history-service-1, groupId=booking-history-service] Resetting offset for partition booking-created-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[kafka:9092 (id: 1 rack: null)], epoch=0}}.
+2025-08-05T17:56:42.432Z  INFO 1 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : booking-history-service: partitions assigned: [booking-created-0]
