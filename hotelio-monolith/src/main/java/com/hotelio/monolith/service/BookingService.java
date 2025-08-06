@@ -5,7 +5,9 @@ import com.hotelio.monolith.entity.PromoCode;
 import com.hotelio.monolith.repository.BookingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +17,33 @@ public class BookingService {
 
     private static final Logger log = LoggerFactory.getLogger(BookingService.class);
 
+    private static final String BOOKING_CREATED_TOPIC = "booking-created";
+    
     private final BookingRepository bookingRepository;
     private final PromoCodeService promoCodeService;
     private final ReviewService reviewService;
     private final AppUserService userService;
     private final HotelService hotelService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
+    @Autowired
+    public BookingService(
+            BookingRepository bookingRepository,
+            PromoCodeService promoCodeService,
+            ReviewService reviewService,
+            AppUserService userService,
+            HotelService hotelService,
+            KafkaTemplate<String, String> kafkaTemplate
+    ) {
+        this.bookingRepository = bookingRepository;
+        this.promoCodeService = promoCodeService;
+        this.reviewService = reviewService;
+        this.userService = userService;
+        this.hotelService = hotelService;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    // Конструктор для совместимости с внешней библиотекой
     public BookingService(
             BookingRepository bookingRepository,
             PromoCodeService promoCodeService,
@@ -33,6 +56,7 @@ public class BookingService {
         this.reviewService = reviewService;
         this.userService = userService;
         this.hotelService = hotelService;
+        this.kafkaTemplate = null; // Kafka не будет работать
     }
 
     public List<Booking> listAll(String userId) {
@@ -58,7 +82,28 @@ public class BookingService {
         booking.setDiscountPercent(discount);
         booking.setPrice(finalPrice);
 
-        return bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+        
+        // Отправляем событие в Kafka
+        if (kafkaTemplate != null) {
+            try {
+                String event = String.format("{\"bookingId\":\"%d\",\"userId\":\"%s\",\"hotelId\":\"%s\",\"price\":%.2f,\"promoCode\":\"%s\"}", 
+                    savedBooking.getId(), 
+                    savedBooking.getUserId(), 
+                    savedBooking.getHotelId(), 
+                    savedBooking.getPrice(),
+                    savedBooking.getPromoCode() != null ? savedBooking.getPromoCode() : "");
+                
+                kafkaTemplate.send(BOOKING_CREATED_TOPIC, event);
+                log.info("Sent booking event to Kafka: {}", event);
+            } catch (Exception e) {
+                log.error("Failed to send booking event to Kafka", e);
+            }
+        } else {
+            log.warn("Kafka template is not available, skipping event sending");
+        }
+
+        return savedBooking;
     }
 
     private void validateUser(String userId) {
