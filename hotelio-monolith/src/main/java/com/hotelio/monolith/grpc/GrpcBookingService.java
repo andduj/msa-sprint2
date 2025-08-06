@@ -88,7 +88,7 @@ public class GrpcBookingService {
         
         try {
             BookingListRequest.Builder requestBuilder = BookingListRequest.newBuilder();
-            if (userId != null) {
+            if (userId != null && !userId.trim().isEmpty()) {
                 requestBuilder.setUserId(userId);
             }
             BookingListRequest request = requestBuilder.build();

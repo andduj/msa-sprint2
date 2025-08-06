@@ -1,6 +1,4 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -12,8 +10,7 @@ spring:
     properties:
       hibernate.format_sql: false
 
-booking:
-  service:
-    external:
-      host: ${BOOKING_SERVICE_EXTERNAL_HOST:booking-service}
-      port: ${BOOKING_SERVICE_EXTERNAL_PORT:9090}
+#booking:
+#  service:
+#    external-host: booking-service
+#    external-port: 9090

@@ -21,10 +21,6 @@ public class Hotel {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public boolean isOperational() {
         return operational;
     }
