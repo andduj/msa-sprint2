@@ -1,0 +1,13 @@
+ОТЧЕТ: Реализация Booking Subgraph
+
+Внесенные изменения в booking-subgraph:
+
+1. Добавлена интеграция с gRPC booking-service из task2
+2. Реализована система безопасности ACL (Access Control List)
+3. Обновлены зависимости в package.json
+4. Обновлен Dockerfile
+5. Обновлен docker-compose.yml
+6. Добавлена поддержка Federation
+
+Booking-subgraph теперь предоставляет безопасный доступ к данным бронирований через GraphQL Federation 
+с gRPC интеграцией.
