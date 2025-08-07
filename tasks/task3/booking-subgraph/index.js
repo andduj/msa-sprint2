@@ -19,15 +19,32 @@ const typeDefs = gql`
     hotel: Hotel
   }
 
-  type Hotel @key(fields: "id") {
-    id: ID!
-    name: String
-    city: String
-    stars: Int
+  extend type Hotel @key(fields: "id") {
+    id: ID! @external
   }
 
   type Query {
     bookingsByUser(userId: String!): [Booking]
+    _entities(representations: [_Any!]!): [_Entity]!
+    _service: _Service!
+  }
+
+  scalar _Any
+  scalar _FieldSet
+
+  type _Entity {
+    ... on Booking {
+      id: ID!
+      userId: String!
+      hotelId: String!
+      promoCode: String
+      discountPercent: Int
+      hotel: Hotel
+    }
+  }
+
+  type _Service {
+    sdl: String
   }
 `;
 
@@ -81,6 +98,42 @@ const resolvers = {
         return [];
       }
     },
+    _entities: async (_, { representations }) => {
+      // Federation: обработка _entities запроса
+      console.log(`🔍 _entities query with representations:`, representations);
+      
+      const entities = await Promise.all(
+        representations.map(async (rep) => {
+          if (rep.__typename === 'Booking') {
+            try {
+              const request = new BookingListRequest();
+              request.setUserId(rep.userId);
+              
+              const response = await listBookingsAsync(request);
+              const booking = response.getBookingsList().find(b => b.getId() === rep.id);
+              
+              if (booking) {
+                return {
+                  id: booking.getId(),
+                  userId: booking.getUserId(),
+                  hotelId: booking.getHotelId(),
+                  promoCode: booking.getPromoCode() || null,
+                  discountPercent: booking.getDiscountPercent()
+                };
+              }
+            } catch (error) {
+              console.error(`❌ Error resolving booking entity:`, error);
+            }
+          }
+          return null;
+        })
+      );
+      
+      return entities.filter(entity => entity !== null);
+    },
+    _service: () => {
+      return { sdl: typeDefs.loc.source.body };
+    },
   },
   Booking: {
     __resolveReference: async (reference) => {
@@ -109,6 +162,7 @@ const resolvers = {
     },
     hotel: async (parent) => {
       // Federation: возвращаем ссылку на отель
+      console.log(`🔍 Resolving hotel for booking ${parent.id} with hotelId: ${parent.hotelId}`);
       return { __typename: "Hotel", id: parent.hotelId };
     },
   },

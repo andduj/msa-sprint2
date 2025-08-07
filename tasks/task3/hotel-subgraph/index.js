@@ -13,6 +13,24 @@ const typeDefs = gql`
 
   type Query {
     hotelsByIds(ids: [ID!]!): [Hotel]
+    _entities(representations: [_Any!]!): [_Entity]!
+    _service: _Service!
+  }
+
+  scalar _Any
+  scalar _FieldSet
+
+  type _Entity {
+    ... on Hotel {
+      id: ID!
+      name: String
+      city: String
+      stars: Int
+    }
+  }
+
+  type _Service {
+    sdl: String
   }
 `;
 
@@ -60,6 +78,7 @@ const resolvers = {
     __resolveReference: async ({ id }) => {
       // Federation: получение отеля по ID
       try {
+        console.log(`🔍 __resolveReference for hotel ID: ${id}`);
         const hotel = await fetchHotelById(id);
         return hotel;
       } catch (error) {
@@ -86,6 +105,25 @@ const resolvers = {
         console.error(`❌ Error fetching hotels by IDs:`, error);
         return [];
       }
+    },
+    _entities: async (_, { representations }) => {
+      // Federation: обработка _entities запроса
+      console.log(`🔍 _entities query with representations:`, representations);
+      
+      const entities = await Promise.all(
+        representations.map(async (rep) => {
+          if (rep.__typename === 'Hotel') {
+            const hotel = await fetchHotelById(rep.id);
+            return hotel;
+          }
+          return null;
+        })
+      );
+      
+      return entities.filter(entity => entity !== null);
+    },
+    _service: () => {
+      return { sdl: typeDefs.loc.source.body };
     },
   },
 };
