@@ -1,0 +1,7 @@
+msa-sprint2\tasks\task3> docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+e55428e7e5a4   task3-apollo-gateway     "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp   task3-apollo-gateway-1
+870d63715f1e   task3-booking-subgraph   "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   0.0.0.0:4001->4001/tcp, [::]:4001->4001/tcp   task3-booking-subgraph-1
+681c23df6f38   task3-booking-service    "java -jar app.jar"      15 minutes ago   Up 15 minutes   0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp   booking-service
+402a49470a18   task3-hotel-subgraph     "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   0.0.0.0:4002->4002/tcp, [::]:4002->4002/tcp   task3-hotel-subgraph-1
+a6f96f2b715e   postgres:15              "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp   booking-db
