@@ -16,6 +16,14 @@ const typeDefs = gql`
     hotelId: String!
     promoCode: String
     discountPercent: Int
+    hotel: Hotel
+  }
+
+  type Hotel @key(fields: "id") {
+    id: ID!
+    name: String
+    city: String
+    stars: Int
   }
 
   type Query {
@@ -98,6 +106,10 @@ const resolvers = {
         console.error(`❌ Error resolving booking reference:`, error);
         return null;
       }
+    },
+    hotel: async (parent) => {
+      // Federation: возвращаем ссылку на отель
+      return { __typename: "Hotel", id: parent.hotelId };
     },
   },
 };

@@ -8,6 +8,18 @@
 4. Обновлен Dockerfile
 5. Обновлен docker-compose.yml
 6. Добавлена поддержка Federation
+7. Добавлено поле hotel в схему Booking для Federation
+
+Внесенные изменения в hotel-subgraph:
+
+1. Реализован __resolveReference для получения отеля по ID
+2. Добавлена функция fetchHotelById для работы с внешним API
+3. Реализован резолвер hotelsByIds для получения нескольких отелей
+4. Добавлены тестовые данные отелей
+5. Добавлена обработка ошибок и логирование
+6. Настроена интеграция с Apollo Gateway
 
 Booking-subgraph теперь предоставляет безопасный доступ к данным бронирований через GraphQL Federation 
 с gRPC интеграцией.
+
+Hotel-subgraph предоставляет данные об отелях и поддерживает Federation для объединения с booking-subgraph.
