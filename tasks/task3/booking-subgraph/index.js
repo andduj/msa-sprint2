@@ -117,12 +117,15 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  schema: buildSubgraphSchema([{ typeDefs, resolvers }]),
+  schema: buildSubgraphSchema([{ typeDefs, resolvers }])
 });
 
 startStandaloneServer(server, {
   listen: { port: 4001 },
-  context: async ({ req }) => ({ req }),
+  context: async ({ req }) => {
+    console.log('📥 Booking-subgraph request headers:', req.headers);
+    return { req };
+  },
 }).then(() => {
   console.log('Booking subgraph ready at http://localhost:4001/');
 });
