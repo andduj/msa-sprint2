@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@apollo/server": "^4.8.1",
-    "@apollo/subgraph": "^2.4.0",
-    "graphql": "^16.8.1",
+    "@apollo/server": "^4.7.0",
+    "@apollo/subgraph": "^2.3.0",
+    "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
     "@grpc/grpc-js": "^1.9.0",
     "google-protobuf": "^3.21.0"

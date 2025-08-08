@@ -25,26 +25,6 @@ const typeDefs = gql`
 
   type Query {
     bookingsByUser(userId: String!): [Booking]
-    _entities(representations: [_Any!]!): [_Entity]!
-    _service: _Service!
-  }
-
-  scalar _Any
-  scalar _FieldSet
-
-  type _Entity {
-    ... on Booking {
-      id: ID!
-      userId: String!
-      hotelId: String!
-      promoCode: String
-      discountPercent: Int
-      hotel: Hotel
-    }
-  }
-
-  type _Service {
-    sdl: String
   }
 `;
 
@@ -59,21 +39,9 @@ const listBookingsAsync = promisify(bookingClient.listBookings.bind(bookingClien
 
 const resolvers = {
   Query: {
-    bookingsByUser: async (_, { userId }, { req }) => {
-      // Временно отключаем ACL для тестирования Gateway
-      // const requestUserId = req.headers['userid'];
-      // if (!requestUserId) {
-      //   console.log('❌ ACL: No userid header provided');
-      //   return [];
-      // }
-      
-      // if (requestUserId !== userId) {
-      //   console.log(`❌ ACL: User ${requestUserId} cannot access bookings for user ${userId}`);
-      //   return [];
-      // }
-
+    bookingsByUser: async (_, { userId }) => {
       try {
-        console.log(`🔍 Fetching bookings for user: ${userId}`);
+        console.log(`Fetching bookings for user: ${userId}`);
         
         // Создаем gRPC запрос
         const request = new BookingListRequest();
@@ -91,54 +59,19 @@ const resolvers = {
           discountPercent: booking.getDiscountPercent()
         }));
         
-        console.log(`✅ Found ${bookings.length} bookings for user ${userId}`);
+        console.log(`Found ${bookings.length} bookings for user ${userId}`);
+        console.log('Bookings:', bookings);
         return bookings;
       } catch (error) {
-        console.error(`❌ Error fetching bookings for user ${userId}:`, error);
+        console.error(`Error fetching bookings for user ${userId}:`, error);
         return [];
       }
-    },
-    _entities: async (_, { representations }) => {
-      // Federation: обработка _entities запроса
-      console.log(`🔍 _entities query with representations:`, representations);
-      
-      const entities = await Promise.all(
-        representations.map(async (rep) => {
-          if (rep.__typename === 'Booking') {
-            try {
-              const request = new BookingListRequest();
-              request.setUserId(rep.userId);
-              
-              const response = await listBookingsAsync(request);
-              const booking = response.getBookingsList().find(b => b.getId() === rep.id);
-              
-              if (booking) {
-                return {
-                  id: booking.getId(),
-                  userId: booking.getUserId(),
-                  hotelId: booking.getHotelId(),
-                  promoCode: booking.getPromoCode() || null,
-                  discountPercent: booking.getDiscountPercent()
-                };
-              }
-            } catch (error) {
-              console.error(`❌ Error resolving booking entity:`, error);
-            }
-          }
-          return null;
-        })
-      );
-      
-      return entities.filter(entity => entity !== null);
-    },
-    _service: () => {
-      return { sdl: typeDefs.loc.source.body };
-    },
+    }
   },
   Booking: {
     __resolveReference: async (reference) => {
-      // Для Federation - получение отдельного бронирования по ID
       try {
+        console.log(`__resolveReference for booking:`, reference);
         const request = new BookingListRequest();
         request.setUserId(reference.userId);
         
@@ -146,26 +79,36 @@ const resolvers = {
         const booking = response.getBookingsList().find(b => b.getId() === reference.id);
         
         if (booking) {
-          return {
+          const result = {
             id: booking.getId(),
             userId: booking.getUserId(),
             hotelId: booking.getHotelId(),
             promoCode: booking.getPromoCode() || null,
             discountPercent: booking.getDiscountPercent()
           };
+          console.log(`__resolveReference result:`, result);
+          return result;
         }
+        console.log(`Booking not found for reference:`, reference);
         return null;
       } catch (error) {
-        console.error(`❌ Error resolving booking reference:`, error);
+        console.error(`Error resolving booking reference:`, error);
         return null;
       }
     },
     hotel: async (parent) => {
-      // Federation: возвращаем ссылку на отель
-      console.log(`🔍 Resolving hotel for booking ${parent.id} with hotelId: ${parent.hotelId}`);
-      return { __typename: "Hotel", id: parent.hotelId };
-    },
+      console.log(`Resolving hotel for booking ${parent.id} with hotelId: ${parent.hotelId}`);
+      const hotelReference = { __typename: "Hotel", id: parent.hotelId };
+      console.log(`Hotel reference:`, hotelReference);
+      return hotelReference;
+    }
   },
+  Hotel: {
+    id: (parent) => {
+      console.log(`Hotel.id resolver called with:`, parent);
+      return parent.id;
+    }
+  }
 };
 
 const server = new ApolloServer({
@@ -176,5 +119,5 @@ startStandaloneServer(server, {
   listen: { port: 4001 },
   context: async ({ req }) => ({ req }),
 }).then(() => {
-  console.log('✅ Booking subgraph ready at http://localhost:4001/');
+  console.log('Booking subgraph ready at http://localhost:4001/');
 });

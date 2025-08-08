@@ -1,0 +1,13 @@
+{
+  "name": "federation-test",
+  "version": "1.0.0",
+  "description": "Test script for Apollo Federation",
+  "main": "test-federation.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test-federation.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
