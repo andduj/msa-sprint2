@@ -24,6 +24,8 @@ services:
     build: ./hotel-subgraph
     ports:
       - "4002:4002"
+    depends_on:
+      - hotel-db
     networks:
       - hotelio-net
 
@@ -58,9 +60,25 @@ services:
     networks:
       - hotelio-net
 
+  hotel-db:
+    image: postgres:15
+    container_name: hotel-db
+    environment:
+      POSTGRES_USER: hotel
+      POSTGRES_PASSWORD: hotel
+      POSTGRES_DB: hotel_service
+    ports:
+      - "5434:5432"
+    volumes:
+      - hotel-db-data:/var/lib/postgresql/data
+      - ./init-hotel-data.sql:/docker-entrypoint-initdb.d/init-hotel-data.sql
+    networks:
+      - hotelio-net
+
 networks:
   hotelio-net:
     driver: bridge
 
 volumes:
   booking-db-data:
+  hotel-db-data:

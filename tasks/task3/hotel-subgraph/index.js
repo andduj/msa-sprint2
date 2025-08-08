@@ -2,6 +2,7 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import gql from 'graphql-tag';
+import { Pool } from 'pg';
 
 const typeDefs = gql`
   type Hotel @key(fields: "id") {
@@ -16,65 +17,77 @@ const typeDefs = gql`
   }
 `;
 
-// Заглушка данных для тестирования
-const mockHotels = [
-  {
-    id: "hotel1",
-    name: "Grand Hotel",
-    city: "Moscow",
-    stars: 5
-  },
-  {
-    id: "hotel2", 
-    name: "Business Inn",
-    city: "St. Petersburg",
-    stars: 4
-  },
-  {
-    id: "hotel3",
-    name: "Comfort Hotel",
-    city: "Kazan",
-    stars: 3
-  }
-];
+// Подключение к PostgreSQL
+const pool = new Pool({
+  user: 'hotel',
+  host: 'hotel-db',
+  database: 'hotel_service',
+  password: 'hotel',
+  port: 5432,
+});
 
-// Функция для получения отеля по ID
-function fetchHotelById(id) {
+// Функция для получения отеля по ID из базы данных
+async function fetchHotelById(id) {
   console.log(`Fetching hotel by ID: ${id}`);
   
-  const hotel = mockHotels.find(h => h.id === id);
-  if (hotel) {
-    console.log(`Found hotel: ${hotel.name}`);
-    return hotel;
-  } else {
-    console.log(`Hotel not found: ${id}`);
+  try {
+    const query = 'SELECT id, name, city, stars FROM hotels WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    
+    if (result.rows.length > 0) {
+      const hotel = result.rows[0];
+      console.log(`Found hotel: ${hotel.name}`);
+      return {
+        id: hotel.id.toString(),
+        name: hotel.name,
+        city: hotel.city,
+        stars: hotel.stars
+      };
+    } else {
+      console.log(`Hotel not found: ${id}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Error fetching hotel ${id}:`, error);
     return null;
+  }
+}
+
+// Функция для получения отелей по ID из базы данных
+async function fetchHotelsByIds(ids) {
+  console.log(`Fetching hotels by IDs: ${ids.join(', ')}`);
+  
+  try {
+    const query = 'SELECT id, name, city, stars FROM hotels WHERE id = ANY($1)';
+    const result = await pool.query(query, [ids]);
+    
+    const hotels = result.rows.map(hotel => ({
+      id: hotel.id.toString(),
+      name: hotel.name,
+      city: hotel.city,
+      stars: hotel.stars
+    }));
+    
+    console.log(`Found ${hotels.length} hotels:`, hotels);
+    return hotels;
+  } catch (error) {
+    console.error(`Error fetching hotels by IDs:`, error);
+    return [];
   }
 }
 
 const resolvers = {
   Hotel: {
-    __resolveReference: ({ id }) => {
+    __resolveReference: async ({ id }) => {
       console.log(`__resolveReference for hotel ID: ${id}`);
-      const hotel = fetchHotelById(id);
+      const hotel = await fetchHotelById(id);
       console.log(`__resolveReference result for ${id}:`, hotel);
       return hotel;
     }
   },
   Query: {
-    hotelsByIds: (_, { ids }) => {
-      try {
-        console.log(`Fetching hotels by IDs: ${ids.join(', ')}`);
-        
-        const hotels = ids.map(id => fetchHotelById(id));
-        const validHotels = hotels.filter(hotel => hotel !== null);
-        console.log(`Found ${validHotels.length} hotels:`, validHotels);
-        
-        return validHotels;
-      } catch (error) {
-        console.error(`Error fetching hotels by IDs:`, error);
-        return [];
-      }
+    hotelsByIds: async (_, { ids }) => {
+      return await fetchHotelsByIds(ids);
     }
   }
 };

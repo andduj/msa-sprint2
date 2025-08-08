@@ -98,7 +98,12 @@ const resolvers = {
     },
     hotel: async (parent) => {
       console.log(`Resolving hotel for booking ${parent.id} with hotelId: ${parent.hotelId}`);
-      const hotelReference = { __typename: "Hotel", id: parent.hotelId };
+      
+      // Преобразуем hotelId из "hotel1" в "1", "hotel2" в "2" и т.д.
+      const numericId = parent.hotelId.replace('hotel', '');
+      console.log(`Converted hotelId from ${parent.hotelId} to ${numericId}`);
+      
+      const hotelReference = { __typename: "Hotel", id: numericId };
       console.log(`Hotel reference:`, hotelReference);
       return hotelReference;
     }
