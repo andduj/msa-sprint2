@@ -25,7 +25,10 @@ public class BookingService {
     }
 
     public List<Booking> listAll(String userId) {
-        return userId != null ? bookingRepository.findByUserId(userId) : bookingRepository.findAll();
+        log.info("BookingService.listAll called with userId: '{}'", userId);
+        List<Booking> result = userId != null ? bookingRepository.findByUserId(userId) : bookingRepository.findAll();
+        log.info("BookingService.listAll found {} bookings for userId: '{}'", result.size(), userId);
+        return result;
     }
 
     public Booking createBooking(String userId, String hotelId, String promoCode) {

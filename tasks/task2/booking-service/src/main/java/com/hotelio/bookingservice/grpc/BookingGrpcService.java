@@ -6,6 +6,8 @@ import com.hotelio.proto.booking.*;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 @GrpcService
 public class BookingGrpcService extends BookingServiceGrpc.BookingServiceImplBase {
 
+    private static final Logger log = LoggerFactory.getLogger(BookingGrpcService.class);
     private final BookingService bookingService;
 
     @Autowired
@@ -23,6 +26,9 @@ public class BookingGrpcService extends BookingServiceGrpc.BookingServiceImplBas
     @Override
     public void createBooking(BookingRequest request, StreamObserver<BookingResponse> responseObserver) {
         try {
+            log.info("gRPC createBooking called with userId: {}, hotelId: {}, promoCode: {}", 
+                request.getUserId(), request.getHotelId(), request.getPromoCode());
+            
             Booking booking = bookingService.createBooking(
                 request.getUserId(),
                 request.getHotelId(),
@@ -39,9 +45,11 @@ public class BookingGrpcService extends BookingServiceGrpc.BookingServiceImplBas
                 .setCreatedAt(booking.getCreatedAt().toString())
                 .build();
 
+            log.info("gRPC createBooking response: {}", response);
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (Exception e) {
+            log.error("Error in createBooking gRPC call", e);
             responseObserver.onError(e);
         }
     }
@@ -49,7 +57,17 @@ public class BookingGrpcService extends BookingServiceGrpc.BookingServiceImplBas
     @Override
     public void listBookings(BookingListRequest request, StreamObserver<BookingListResponse> responseObserver) {
         try {
-            List<Booking> bookings = bookingService.listAll(request.getUserId());
+            String userId = request.getUserId();
+            log.info("gRPC listBookings called with userId: '{}'", userId);
+            
+            List<Booking> bookings = bookingService.listAll(userId);
+            log.info("Found {} bookings for userId: '{}'", bookings.size(), userId);
+            
+            for (Booking booking : bookings) {
+                log.info("Booking: id={}, userId={}, hotelId={}, promoCode={}, discountPercent={}, price={}", 
+                    booking.getId(), booking.getUserId(), booking.getHotelId(), 
+                    booking.getPromoCode(), booking.getDiscountPercent(), booking.getPrice());
+            }
             
             BookingListResponse.Builder responseBuilder = BookingListResponse.newBuilder();
             
@@ -67,9 +85,12 @@ public class BookingGrpcService extends BookingServiceGrpc.BookingServiceImplBas
                 responseBuilder.addBookings(bookingResponse);
             }
 
-            responseObserver.onNext(responseBuilder.build());
+            BookingListResponse response = responseBuilder.build();
+            log.info("gRPC listBookings response contains {} bookings", response.getBookingsCount());
+            responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (Exception e) {
+            log.error("Error in listBookings gRPC call", e);
             responseObserver.onError(e);
         }
     }
