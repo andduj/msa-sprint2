@@ -1,0 +1,2 @@
+v1=/ping hits (2m): 10
+v2=/ping hits (2m): 10
