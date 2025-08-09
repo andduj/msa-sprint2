@@ -26,13 +26,21 @@ const pool = new Pool({
   port: 5432,
 });
 
+// Приведение ID к числу: поддержка значений вида "hotel1" → 1
+function normalizeHotelId(rawId) {
+  const idString = String(rawId ?? '');
+  const onlyDigits = idString.replace(/\D+/g, '');
+  return Number.parseInt(onlyDigits || '0', 10);
+}
+
 // Функция для получения отеля по ID из базы данных
 async function fetchHotelById(id) {
   console.log(`Fetching hotel by ID: ${id}`);
+  const numericId = normalizeHotelId(id);
   
   try {
     const query = 'SELECT id, name, city, stars FROM hotels WHERE id = $1';
-    const result = await pool.query(query, [id]);
+    const result = await pool.query(query, [numericId]);
     
     if (result.rows.length > 0) {
       const hotel = result.rows[0];
@@ -56,10 +64,11 @@ async function fetchHotelById(id) {
 // Функция для получения отелей по ID из базы данных
 async function fetchHotelsByIds(ids) {
   console.log(`Fetching hotels by IDs: ${ids.join(', ')}`);
+  const numericIds = ids.map(normalizeHotelId).filter((n) => Number.isFinite(n) && n > 0);
   
   try {
     const query = 'SELECT id, name, city, stars FROM hotels WHERE id = ANY($1)';
-    const result = await pool.query(query, [ids]);
+    const result = await pool.query(query, [numericIds]);
     
     const hotels = result.rows.map(hotel => ({
       id: hotel.id.toString(),

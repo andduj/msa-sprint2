@@ -46,37 +46,27 @@ const listBookingsAsync = bookingClient ? promisify(bookingClient.listBookings.b
 
 const resolvers = {
   Query: {
-    bookingsByUser: async (_, { userId }) => {
+    bookingsByUser: async (_, { userId }, { req }) => {
       try {
-        console.log(`Fetching bookings for user: ${userId}`);
-        
-        if (!bookingClient || !listBookingsAsync) {
-          console.log('gRPC client not available, returning mock data');
-          // Возвращаем моковые данные если gRPC недоступен
-          return [
-            {
-              id: "1",
-              userId: userId,
-              hotelId: "hotel1",
-              promoCode: "SUMMER2024",
-              discountPercent: 10
-            },
-            {
-              id: "2", 
-              userId: userId,
-              hotelId: "hotel2",
-              promoCode: null,
-              discountPercent: 0
-            }
-          ];
+        const headerUserId = req?.headers?.['userid'] || req?.headers?.['userId'];
+        const variablesUserId = req?.body?.variables?.userid || req?.body?.variables?.userId;
+        const effectiveUserId = headerUserId || variablesUserId;
+        console.log(`Fetching bookings for user arg='${userId}', header='${headerUserId}', vars='${variablesUserId}'`);
+
+        // ACL: если заголовок отсутствует или не совпадает с userId запроса — возвращаем пусто
+        if (!effectiveUserId || effectiveUserId !== userId) {
+          console.log('ACL: access denied (missing or mismatched userid header)');
+          return [];
         }
         
-        // Создаем gRPC запрос
-        const request = new BookingListRequest();
-        request.setUserId(userId);
+        if (!bookingClient || !listBookingsAsync) {
+          console.log('gRPC client not available');
+          return [];
+        }
         
-        console.log('gRPC request userId:', request.getUserId());
-        console.log('gRPC request object:', request);
+        // Создаем gRPC запрос как plain-object для proto-loader (keepCase: true)
+        const request = { user_id: userId };
+        console.log('gRPC request object (plain):', request);
         
         // Вызываем gRPC сервис
         const response = await listBookingsAsync(request);
@@ -96,10 +86,12 @@ const resolvers = {
           console.log('Processing bookings array from response.bookings');
           bookings = response.bookings.map(booking => ({
             id: booking.id,
-            userId: booking.userId,
-            hotelId: booking.hotelId,
-            promoCode: booking.promoCode || null,
-            discountPercent: booking.discountPercent
+            userId: booking.userId ?? booking.user_id,
+            hotelId: booking.hotelId ?? booking.hotel_id,
+            promoCode: (booking.promoCode ?? booking.promo_code) || null,
+            discountPercent: (booking.discountPercent ?? booking.discount_percent) != null
+              ? Math.trunc(booking.discountPercent ?? booking.discount_percent)
+              : null
           }));
         } else if (response && response.getBookingsList) {
           // Если есть метод getBookingsList (для совместимости)
@@ -109,48 +101,17 @@ const resolvers = {
             userId: booking.getUserId(),
             hotelId: booking.getHotelId(),
             promoCode: booking.getPromoCode() || null,
-            discountPercent: booking.getDiscountPercent()
+            discountPercent: Math.trunc(booking.getDiscountPercent())
           }));
         } else {
           console.error('Unexpected gRPC response structure:', response);
-          // Возвращаем моковые данные при неожиданной структуре
-          return [
-            {
-              id: "1",
-              userId: userId,
-              hotelId: "hotel1",
-              promoCode: "SUMMER2024",
-              discountPercent: 10
-            },
-            {
-              id: "2",
-              userId: userId,
-              hotelId: "hotel2",
-              promoCode: null,
-              discountPercent: 0
-            }
-          ];
+          return [];
         }
         
-        // Если gRPC вернул пустой результат, используем моковые данные
+        // Если gRPC вернул пустой результат, возвращаем пустой массив
         if (bookings.length === 0) {
-          console.log('gRPC returned empty result, using mock data');
-          bookings = [
-            {
-              id: "1",
-              userId: userId,
-              hotelId: "hotel1",
-              promoCode: "SUMMER2024",
-              discountPercent: 10
-            },
-            {
-              id: "2",
-              userId: userId,
-              hotelId: "hotel2",
-              promoCode: null,
-              discountPercent: 0
-            }
-          ];
+          console.log('gRPC returned empty result');
+          return [];
         }
         
         console.log(`Found ${bookings.length} bookings for user ${userId}`);
@@ -158,23 +119,7 @@ const resolvers = {
         return bookings;
       } catch (error) {
         console.error(`Error fetching bookings for user ${userId}:`, error);
-        // Возвращаем моковые данные при ошибке
-        return [
-          {
-            id: "1",
-            userId: userId,
-            hotelId: "hotel1", 
-            promoCode: "SUMMER2024",
-            discountPercent: 10
-          },
-          {
-            id: "2",
-            userId: userId,
-            hotelId: "hotel2",
-            promoCode: null,
-            discountPercent: 0
-          }
-        ];
+        return [];
       }
     }
   },
@@ -188,8 +133,7 @@ const resolvers = {
           return null;
         }
         
-        const request = new BookingListRequest();
-        request.setUserId(reference.userId);
+        const request = { user_id: reference.userId };
         
         const response = await listBookingsAsync(request);
         

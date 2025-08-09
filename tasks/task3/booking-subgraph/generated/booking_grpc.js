@@ -30,7 +30,16 @@ class BookingServiceClient {
 
   listBookings(request, callback) {
     console.log(`Making gRPC call to ${this.client.target} for listBookings`);
-    console.log('Request userId:', request.getUserId());
+    try {
+      const userId =
+        (typeof request?.getUserId === 'function' ? request.getUserId() : undefined) ||
+        request?.user_id ||
+        request?.userId ||
+        '';
+      console.log('Request userId:', userId);
+    } catch (e) {
+      console.log('Request userId: <unable to read>', e?.message);
+    }
     
     this.client.listBookings(request, (error, response) => {
       if (error) {
