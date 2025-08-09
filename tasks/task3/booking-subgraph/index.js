@@ -49,12 +49,10 @@ const resolvers = {
     bookingsByUser: async (_, { userId }, { req }) => {
       try {
         const headerUserId = req?.headers?.['userid'] || req?.headers?.['userId'];
-        const variablesUserId = req?.body?.variables?.userid || req?.body?.variables?.userId;
-        const effectiveUserId = headerUserId || variablesUserId;
-        console.log(`Fetching bookings for user arg='${userId}', header='${headerUserId}', vars='${variablesUserId}'`);
+        console.log(`Fetching bookings for user arg='${userId}', header='${headerUserId}'`);
 
         // ACL: если заголовок отсутствует или не совпадает с userId запроса — возвращаем пусто
-        if (!effectiveUserId || effectiveUserId !== userId) {
+        if (!headerUserId || headerUserId !== userId) {
           console.log('ACL: access denied (missing or mismatched userid header)');
           return [];
         }

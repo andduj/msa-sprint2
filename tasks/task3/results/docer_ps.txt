@@ -1,8 +1,8 @@
-msa-sprint2\tasks\task3>  docker ps
+msa-sprint2\tasks\task3> docker ps
 CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS         PORTS                                         NAMES
-2be1ed2e4bb5   task3-apollo-gateway     "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp   task3-apollo-gateway-1
-747bb75a46e2   task3-booking-subgraph   "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   0.0.0.0:4001->4001/tcp, [::]:4001->4001/tcp   task3-booking-subgraph-1
-3772c10d75ae   task3-booking-service    "java -jar app.jar"      4 minutes ago   Up 4 minutes   0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp   booking-service
-d2f4bd41829c   task3-hotel-subgraph     "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   0.0.0.0:4002->4002/tcp, [::]:4002->4002/tcp   task3-hotel-subgraph-1
-a58aae29fb7c   postgres:15              "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp   booking-db
-8ec131870110   postgres:15              "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   0.0.0.0:5434->5432/tcp, [::]:5434->5432/tcp   hotel-db
+19fc0e4c8be1   task3-apollo-gateway     "docker-entrypoint.s…"   8 seconds ago   Up 7 seconds   0.0.0.0:4000->4000/tcp, [::]:4000->4000/tcp   task3-apollo-gateway-1
+b8ea0d69b651   task3-booking-subgraph   "docker-entrypoint.s…"   8 seconds ago   Up 7 seconds   0.0.0.0:4001->4001/tcp, [::]:4001->4001/tcp   task3-booking-subgraph-1
+45859bca4a13   task3-booking-service    "java -jar app.jar"      8 seconds ago   Up 7 seconds   0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp   booking-service
+bb9db26bfc26   task3-hotel-subgraph     "docker-entrypoint.s…"   8 seconds ago   Up 7 seconds   0.0.0.0:4002->4002/tcp, [::]:4002->4002/tcp   task3-hotel-subgraph-1
+a29e63a5ea1d   postgres:15              "docker-entrypoint.s…"   8 seconds ago   Up 7 seconds   0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp   booking-db
+6d6487b878a5   postgres:15              "docker-entrypoint.s…"   8 seconds ago   Up 7 seconds   0.0.0.0:5434->5432/tcp, [::]:5434->5432/tcp   hotel-db

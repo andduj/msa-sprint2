@@ -10,7 +10,7 @@ const gateway = new ApolloGateway({
       { name: 'hotel', url: 'http://hotel-subgraph:4002' }
     ]
   }),
-  // Проксируем все входящие заголовки в подграфы (включая userid)
+  // Проксируем только входящие заголовки в подграфы (включая userid)
   buildService({ url }) {
     return new RemoteGraphQLDataSource({
       url,
@@ -20,25 +20,6 @@ const gateway = new ApolloGateway({
           for (const [key, value] of Object.entries(headers)) {
             if (typeof value === 'string') {
               request.http.headers.set(key, value);
-            }
-          }
-
-          // Если заголовок userid не передан, но есть переменная запроса `variables.userid`,
-          // пробрасываем её как заголовок для совместимости с клиентами, где сложно задать headers
-          const variablesUserId = context?.req?.body?.variables?.userid;
-          if (!request.http.headers.has('userid') && typeof variablesUserId === 'string' && variablesUserId.length > 0) {
-            request.http.headers.set('userid', variablesUserId);
-          }
-
-          // Доп. совместимость: если userid не найден ни в headers, ни в variables,
-          // пробуем извлечь его из текста запроса: bookingsByUser(userId: "...")
-          if (!request.http.headers.has('userid')) {
-            const queryText = context?.req?.body?.query;
-            if (typeof queryText === 'string') {
-              const match = queryText.match(/bookingsByUser\s*\(\s*userId\s*:\s*"([^"]+)"/i);
-              if (match && match[1]) {
-                request.http.headers.set('userid', match[1]);
-              }
             }
           }
         } catch (e) {
@@ -62,6 +43,11 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['content-type', 'userid'],
+  },
   context: async ({ req }) => {
     console.log('📥 Request headers:', req.headers);
     console.log('📥 Request body:', req.body);

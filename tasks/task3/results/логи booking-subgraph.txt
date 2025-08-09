@@ -1,0 +1,145 @@
+2025-08-09 14:33:12.280 | Booking-subgraph request headers: {
+2025-08-09 14:33:12.281 |   'content-type': 'application/json',
+2025-08-09 14:33:12.281 |   accept: '*/*',
+2025-08-09 14:33:12.281 |   'accept-encoding': 'gzip, deflate, br, zstd',
+2025-08-09 14:33:12.281 |   'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+2025-08-09 14:33:12.281 |   connection: 'keep-alive',
+2025-08-09 14:33:12.281 |   'content-length': '101',
+2025-08-09 14:33:12.281 |   host: 'localhost:4000',
+2025-08-09 14:33:12.281 |   origin: 'http://localhost:4000',
+2025-08-09 14:33:12.281 |   referer: 'http://localhost:4000/',
+2025-08-09 14:33:12.281 |   'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+2025-08-09 14:33:12.281 |   'sec-ch-ua-mobile': '?0',
+2025-08-09 14:33:12.281 |   'sec-ch-ua-platform': '"Windows"',
+2025-08-09 14:33:12.281 |   'sec-fetch-dest': 'empty',
+2025-08-09 14:33:12.281 |   'sec-fetch-mode': 'cors',
+2025-08-09 14:33:12.281 |   'sec-fetch-site': 'same-origin',
+2025-08-09 14:33:12.281 |   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+2025-08-09 14:33:12.281 |   userid: 'user1'
+2025-08-09 14:33:12.281 | }
+2025-08-09 14:33:12.281 | Booking-subgraph request body: {
+2025-08-09 14:33:12.281 |   query: '{bookingsByUser(userId:"user1"){id hotel{__typename id}discountPercent}}',
+2025-08-09 14:33:12.281 |   variables: {}
+2025-08-09 14:33:12.281 | }
+2025-08-09 14:33:12.281 | Fetching bookings for user arg='user1', header='user1'
+2025-08-09 14:33:12.281 | gRPC request object (plain): { user_id: 'user1' }
+2025-08-09 14:33:12.281 | Making gRPC call to undefined for listBookings
+2025-08-09 14:33:12.281 | Request userId: user1
+2025-08-09 14:33:12.289 | Real gRPC Response received
+2025-08-09 14:33:12.289 | Response structure: [ 'bookings' ]
+2025-08-09 14:33:12.289 | Response bookings: [
+2025-08-09 14:33:12.289 |   {
+2025-08-09 14:33:12.289 |     id: '1',
+2025-08-09 14:33:12.289 |     user_id: 'user1',
+2025-08-09 14:33:12.289 |     hotel_id: 'hotel1',
+2025-08-09 14:33:12.289 |     promo_code: 'SUMMER2024',
+2025-08-09 14:33:12.289 |     discount_percent: 10,
+2025-08-09 14:33:12.289 |     price: 90,
+2025-08-09 14:33:12.289 |     created_at: '2025-08-09T11:10:10.532381Z'
+2025-08-09 14:33:12.289 |   },
+2025-08-09 14:33:12.289 |   {
+2025-08-09 14:33:12.289 |     id: '2',
+2025-08-09 14:33:12.289 |     user_id: 'user1',
+2025-08-09 14:33:12.289 |     hotel_id: 'hotel2',
+2025-08-09 14:33:12.289 |     promo_code: '',
+2025-08-09 14:33:12.289 |     discount_percent: 0,
+2025-08-09 14:33:12.289 |     price: 100,
+2025-08-09 14:33:12.289 |     created_at: '2025-08-09T11:10:10.532381Z'
+2025-08-09 14:33:12.289 |   }
+2025-08-09 14:33:12.289 | ]
+2025-08-09 14:33:12.289 | gRPC response structure: [ 'bookings' ]
+2025-08-09 14:33:12.290 | gRPC response: {
+2025-08-09 14:33:12.290 |   bookings: [
+2025-08-09 14:33:12.290 |     {
+2025-08-09 14:33:12.290 |       id: '1',
+2025-08-09 14:33:12.290 |       user_id: 'user1',
+2025-08-09 14:33:12.290 |       hotel_id: 'hotel1',
+2025-08-09 14:33:12.290 |       promo_code: 'SUMMER2024',
+2025-08-09 14:33:12.290 |       discount_percent: 10,
+2025-08-09 14:33:12.290 |       price: 90,
+2025-08-09 14:33:12.290 |       created_at: '2025-08-09T11:10:10.532381Z'
+2025-08-09 14:33:12.290 |     },
+2025-08-09 14:33:12.290 |     {
+2025-08-09 14:33:12.290 |       id: '2',
+2025-08-09 14:33:12.290 |       user_id: 'user1',
+2025-08-09 14:33:12.290 |       hotel_id: 'hotel2',
+2025-08-09 14:33:12.290 |       promo_code: '',
+2025-08-09 14:33:12.290 |       discount_percent: 0,
+2025-08-09 14:33:12.290 |       price: 100,
+2025-08-09 14:33:12.290 |       created_at: '2025-08-09T11:10:10.532381Z'
+2025-08-09 14:33:12.290 |     }
+2025-08-09 14:33:12.290 |   ]
+2025-08-09 14:33:12.290 | }
+2025-08-09 14:33:12.290 | gRPC response type: object
+2025-08-09 14:33:12.290 | gRPC response bookings: [
+2025-08-09 14:33:12.290 |   {
+2025-08-09 14:33:12.290 |     id: '1',
+2025-08-09 14:33:12.290 |     user_id: 'user1',
+2025-08-09 14:33:12.290 |     hotel_id: 'hotel1',
+2025-08-09 14:33:12.290 |     promo_code: 'SUMMER2024',
+2025-08-09 14:33:12.290 |     discount_percent: 10,
+2025-08-09 14:33:12.290 |     price: 90,
+2025-08-09 14:33:12.290 |     created_at: '2025-08-09T11:10:10.532381Z'
+2025-08-09 14:33:12.290 |   },
+2025-08-09 14:33:12.290 |   {
+2025-08-09 14:33:12.290 |     id: '2',
+2025-08-09 14:33:12.290 |     user_id: 'user1',
+2025-08-09 14:33:12.290 |     hotel_id: 'hotel2',
+2025-08-09 14:33:12.290 |     promo_code: '',
+2025-08-09 14:33:12.290 |     discount_percent: 0,
+2025-08-09 14:33:12.290 |     price: 100,
+2025-08-09 14:33:12.290 |     created_at: '2025-08-09T11:10:10.532381Z'
+2025-08-09 14:33:12.290 |   }
+2025-08-09 14:33:12.290 | ]
+2025-08-09 14:33:12.290 | gRPC response bookings type: object
+2025-08-09 14:33:12.290 | gRPC response bookings length: 2
+2025-08-09 14:33:12.290 | Processing bookings array from response.bookings
+2025-08-09 14:33:12.290 | Found 2 bookings for user user1
+2025-08-09 14:33:12.290 | Bookings: [
+2025-08-09 14:33:12.290 |   {
+2025-08-09 14:33:12.290 |     id: '1',
+2025-08-09 14:33:12.290 |     userId: 'user1',
+2025-08-09 14:33:12.290 |     hotelId: 'hotel1',
+2025-08-09 14:33:12.290 |     promoCode: 'SUMMER2024',
+2025-08-09 14:33:12.290 |     discountPercent: 10
+2025-08-09 14:33:12.290 |   },
+2025-08-09 14:33:12.290 |   {
+2025-08-09 14:33:12.290 |     id: '2',
+2025-08-09 14:33:12.290 |     userId: 'user1',
+2025-08-09 14:33:12.290 |     hotelId: 'hotel2',
+2025-08-09 14:33:12.290 |     promoCode: null,
+2025-08-09 14:33:12.290 |     discountPercent: 0
+2025-08-09 14:33:12.290 |   }
+2025-08-09 14:33:12.290 | ]
+2025-08-09 14:33:12.290 | Resolving hotel for booking 1 with hotelId: hotel1
+2025-08-09 14:33:12.290 | Converted hotelId from hotel1 to 1
+2025-08-09 14:33:12.290 | Hotel reference: { __typename: 'Hotel', id: '1' }
+2025-08-09 14:33:12.290 | Resolving hotel for booking 2 with hotelId: hotel2
+2025-08-09 14:33:12.290 | Converted hotelId from hotel2 to 2
+2025-08-09 14:33:12.290 | Hotel reference: { __typename: 'Hotel', id: '2' }
+2025-08-09 14:33:12.290 | Hotel.id resolver called with: { __typename: 'Hotel', id: '1' }
+2025-08-09 14:33:12.290 | Hotel.id resolver called with: { __typename: 'Hotel', id: '2' }
+2025-08-09 14:33:17.358 | Booking-subgraph request headers: {
+2025-08-09 14:33:17.358 |   'content-type': 'application/json',
+2025-08-09 14:33:17.358 |   accept: '*/*',
+2025-08-09 14:33:17.358 |   'accept-encoding': 'gzip, deflate, br, zstd',
+2025-08-09 14:33:17.358 |   'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+2025-08-09 14:33:17.358 |   connection: 'keep-alive',
+2025-08-09 14:33:17.358 |   'content-length': '101',
+2025-08-09 14:33:17.358 |   host: 'localhost:4000',
+2025-08-09 14:33:17.358 |   origin: 'http://localhost:4000',
+2025-08-09 14:33:17.358 |   referer: 'http://localhost:4000/',
+2025-08-09 14:33:17.358 |   'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+2025-08-09 14:33:17.358 |   'sec-ch-ua-mobile': '?0',
+2025-08-09 14:33:17.358 |   'sec-ch-ua-platform': '"Windows"',
+2025-08-09 14:33:17.358 |   'sec-fetch-dest': 'empty',
+2025-08-09 14:33:17.358 |   'sec-fetch-mode': 'cors',
+2025-08-09 14:33:17.358 |   'sec-fetch-site': 'same-origin',
+2025-08-09 14:33:17.358 |   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36'
+2025-08-09 14:33:17.358 | }
+2025-08-09 14:33:17.358 | Booking-subgraph request body: {
+2025-08-09 14:33:17.358 |   query: '{bookingsByUser(userId:"user1"){id hotel{__typename id}discountPercent}}',
+2025-08-09 14:33:17.358 |   variables: {}
+2025-08-09 14:33:17.358 | }
+2025-08-09 14:33:17.358 | Fetching bookings for user arg='user1', header='undefined'
+2025-08-09 14:33:17.358 | ACL: access denied (missing or mismatched userid header)
