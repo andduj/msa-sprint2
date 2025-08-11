@@ -9,7 +9,6 @@ tools/
 *.zip
 
 # Результаты тестов
-results/*.txt
 results/*.log
 
 # Собранные JAR файлы
