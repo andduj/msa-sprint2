@@ -1,6 +1,18 @@
-$ docker exec history-db psql -U history -d booking_history -c "SELECT * FROM booking_history;"
+echo "=== ИСТОРИЯ ==="
+docker exec history-db psql -U history -d booking_history -c "SELECT * FROM booking_history;"
+
+
+ДО ТЕСТОВ
+=== ИСТОРИЯ ===
+ price | created_at | id | processed_at | booking_id | hotel_id | user_id
+-------+------------+----+--------------+------------+----------+---------
+(0 rows)
+
+
+ПОСЛЕ ТЕСТОВ
+=== ИСТОРИЯ ===
  price | created_at | id |         processed_at          | booking_id |   hotel_id   |   user_id
 -------+------------+----+-------------------------------+------------+--------------+-------------
-   100 |            |  1 | 2025-08-06 19:01:59.784603+00 | 3          | test-hotel-1 | test-user-2
-    80 |            |  2 | 2025-08-06 19:07:29.073442+00 | 4          | test-hotel-1 | test-user-3
+    80 |            |  1 | 2025-08-11 21:31:08.334527+00 | 5          | test-hotel-1 | test-user-3
+    90 |            |  2 | 2025-08-11 21:31:08.381752+00 | 6          | test-hotel-1 | test-user-2
 (2 rows)

@@ -1,3 +1,4 @@
+$ API_URL=http://localhost:8084 bash regress-windows.sh
 🏁 Регрессионный тест до миграции Hotelio (Windows версия)
 🧪 Проверка подключения к БД...
 /var/run/postgresql:5432 - accepting connections
