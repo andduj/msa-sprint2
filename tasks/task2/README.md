@@ -22,5 +22,5 @@ docker compose up -d --build
 
 При запуске тестов, тесты на booking должны упасть.
 
-
 ---
+

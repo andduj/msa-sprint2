@@ -1,0 +1,4 @@
+$ ./check-dns.sh
+▶️ Running in-cluster DNS test...
+pongpod "dns-test" deleted
+✅ Success

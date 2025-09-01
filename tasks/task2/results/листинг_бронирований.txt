@@ -1,0 +1,73 @@
+http://localhost:8084/api/bookings
+
+[
+    {
+        "id": 3,
+        "userId": "test-user-2",
+        "hotelId": "test-hotel-1",
+        "promoCode": "TESTCODE1",
+        "discountPercent": 10.0,
+        "price": 90.0,
+        "createdAt": "2025-08-11T21:31:06.624629Z"
+    },
+    {
+        "id": 4,
+        "userId": "test-user-3",
+        "hotelId": "test-hotel-1",
+        "promoCode": null,
+        "discountPercent": 0.0,
+        "price": 80.0,
+        "createdAt": "2025-08-11T21:31:06.624629Z"
+    },
+    {
+        "id": 5,
+        "userId": "test-user-3",
+        "hotelId": "test-hotel-1",
+        "promoCode": null,
+        "discountPercent": 0.0,
+        "price": 80.0,
+        "createdAt": null
+    },
+    {
+        "id": 6,
+        "userId": "test-user-2",
+        "hotelId": "test-hotel-1",
+        "promoCode": "TESTCODE1",
+        "discountPercent": 10.0,
+        "price": 90.0,
+        "createdAt": null
+    }
+]
+
+
+
+docker run --rm -it fullstorydev/grpcurl:latest -plaintext -d '{}' host.docker.internal:9090 booking.BookingService/ListBookings
+{
+  "bookings": [
+    {
+      "id": "1",
+      "user_id": "user1",
+      "hotel_id": "hotel1",
+      "promo_code": "SUMMER2024",
+      "discount_percent": 10,
+      "price": 90,
+      "created_at": "2025-08-11T21:26:48.557706Z"
+    },
+    {
+      "id": "2",
+      "user_id": "user1",
+      "hotel_id": "hotel2",
+      "price": 100,
+      "created_at": "2025-08-11T21:26:48.585541Z"
+    },
+    {
+      "id": "3",
+      "user_id": "user2",
+      "hotel_id": "hotel1",
+      "promo_code": "WINTER2024",
+      "discount_percent": 15,
+      "price": 85,
+      "created_at": "2025-08-11T21:26:48.589478Z"
+    }
+  ]
+}

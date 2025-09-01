@@ -1,0 +1,29 @@
+# Gradle
+build/
+.gradle/
+bin/
+
+# Скачанные инструменты
+tools/
+*.exe
+*.zip
+
+# Результаты тестов
+results/*.log
+
+# Собранные JAR файлы
+*.jar
+
+# IDE
+.idea/
+*.iml
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Логи
+*.log
+
+# Docker
+.dockerignore 

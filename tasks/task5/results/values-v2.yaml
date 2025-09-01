@@ -1,0 +1,28 @@
+serviceName: booking-service
+version: v2
+createService: false
+
+replicaCount: 1
+
+image:
+  name: booking-service
+  tag: step1
+  pullPolicy: Never
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# В v2 включаем фичу
+enableFeatureX: true
+env: []
+

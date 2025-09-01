@@ -1,0 +1,47 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: booking-service-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - booking-gateway
+  http:
+  - match:
+    - headers:
+        x-feature-enabled:
+          exact: "true"
+      uri:
+        prefix: /ping
+    route:
+    - destination:
+        host: booking-service
+        subset: v2
+        port:
+          number: 80
+  - match:
+    - uri:
+        prefix: /ping
+    route:
+    - destination:
+        host: booking-service
+        subset: v1
+        port:
+          number: 80
+      weight: 90
+    - destination:
+        host: booking-service
+        subset: v2
+        port:
+          number: 80
+      weight: 10
+    retries:
+      attempts: 2
+      perTryTimeout: 1s
+      retryOn: 5xx,connect-failure,refused-stream,reset
+    fault:
+      abort:
+        percentage:
+          value: 0
+

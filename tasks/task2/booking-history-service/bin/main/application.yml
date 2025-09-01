@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://history-db:5432/booking_history}
+    username: ${SPRING_DATASOURCE_USERNAME:history}
+    password: ${SPRING_DATASOURCE_PASSWORD:history}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate.format_sql: false
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: booking-history-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+server:
+  port: 8080 

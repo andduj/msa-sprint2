@@ -1,0 +1,41 @@
+echo "=== СТАРАЯ СИСТЕМА ==="
+docker exec hotelio-db psql -U hotelio -d hotelio -c "SELECT * FROM booking;"
+
+echo "=== НОВАЯ СИСТЕМА ==="
+docker exec booking-db psql -U booking -d booking_service -c "SELECT * FROM bookings;"
+
+
+ДО ТЕСТОВ
+=== СТАРАЯ СИСТЕМА ===
+ discount_percent | price |          created_at           | id |   hotel_id   | promo_code |   user_id
+------------------+-------+-------------------------------+----+--------------+------------+-------------
+               10 |    90 | 2025-08-11 21:28:07.974679+00 |  1 | test-hotel-1 | TESTCODE1  | test-user-2
+                0 |    80 | 2025-08-11 21:28:07.974679+00 |  2 | test-hotel-1 |            | test-user-3
+(2 rows)
+
+=== НОВАЯ СИСТЕМА ===
+ id |          created_at           | discount_percent | hotel_id | price | promo_code | user_id
+----+-------------------------------+------------------+----------+-------+------------+---------
+  1 | 2025-08-11 21:26:48.557706+00 |               10 | hotel1   |    90 | SUMMER2024 | user1
+  2 | 2025-08-11 21:26:48.585541+00 |                0 | hotel2   |   100 |            | user1
+  3 | 2025-08-11 21:26:48.589478+00 |               15 | hotel1   |    85 | WINTER2024 | user2
+(3 rows)
+
+
+ПОСЛЕ ТЕСТОВ
+=== СТАРАЯ СИСТЕМА ===
+ discount_percent | price |          created_at           | id |   hotel_id   | promo_code |   user_id
+------------------+-------+-------------------------------+----+--------------+------------+-------------
+               10 |    90 | 2025-08-11 21:31:06.624629+00 |  3 | test-hotel-1 | TESTCODE1  | test-user-2
+                0 |    80 | 2025-08-11 21:31:06.624629+00 |  4 | test-hotel-1 |            | test-user-3
+                0 |    80 |                               |  5 | test-hotel-1 |            | test-user-3
+               10 |    90 |                               |  6 | test-hotel-1 | TESTCODE1  | test-user-2
+(4 rows)
+
+=== НОВАЯ СИСТЕМА ===
+ id |          created_at           | discount_percent | hotel_id | price | promo_code | user_id
+----+-------------------------------+------------------+----------+-------+------------+---------
+  1 | 2025-08-11 21:26:48.557706+00 |               10 | hotel1   |    90 | SUMMER2024 | user1
+  2 | 2025-08-11 21:26:48.585541+00 |                0 | hotel2   |   100 |            | user1
+  3 | 2025-08-11 21:26:48.589478+00 |               15 | hotel1   |    85 | WINTER2024 | user2
+(3 rows)

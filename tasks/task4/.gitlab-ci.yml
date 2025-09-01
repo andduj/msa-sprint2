@@ -2,22 +2,53 @@ stages:
   - build
   - test
   - deploy
+  - tag
 
+# Глобальные переменные по умолчанию
 variables:
-  IMAGE_TAG: latest
-  IMAGE_NAME: booking-service
+  IMAGE_NAME: "booking-service"
+  IMAGE_TAG: "step1"
+  ENABLE_FEATURE_X: "false"
+
+# Выполняется перед каждым job
+before_script:
+  - echo "Running in $(pwd)"
+  - echo "IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG}"
 
 build:
   stage: build
   script:
-
+    - cd booking-service
+    - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f Dockerfile .
+    - mkdir -p ../results
+    - docker image ls ${IMAGE_NAME}:${IMAGE_TAG} | tee ../results/docker_images.txt
 
 test:
   stage: test
+  needs: ["build"]
   script:
-
+    - cd .
+    - CONTAINER_NAME="${IMAGE_NAME}-ci-${IMAGE_TAG}"
+    - docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
+    - docker run -d --name ${CONTAINER_NAME} -p 18080:8080 -e ENABLE_FEATURE_X=${ENABLE_FEATURE_X} ${IMAGE_NAME}:${IMAGE_TAG}
+    - |
+      for i in {1..30}; do
+        if curl -fsS http://localhost:18080/ping >/dev/null; then
+          echo "Health OK"; break; fi; echo "Waiting for service... ($i)"; sleep 1;
+      done
+    - curl -fsS http://localhost:18080/ping | tee ./results/curl_ping.txt
+    - docker rm -f ${CONTAINER_NAME}
 
 deploy:
   stage: deploy
+  needs: ["test"]
   script:
+    - cd .
+    - minikube status || true
+    - minikube image load ${IMAGE_NAME}:${IMAGE_TAG}
+    - helm upgrade --install booking-service ./helm/booking-service -f ./helm/booking-service/values-staging.yaml --set image.name=${IMAGE_NAME} --set image.tag=${IMAGE_TAG} --set image.pullPolicy=Never
+    - kubectl rollout status deploy/booking-service --timeout=120s
+    - kubectl get pods -l app=booking-service | tee ./results/kubectl_pods.txt
+    - kubectl get svc booking-service | tee ./results/kubectl_svc.txt
+
  
